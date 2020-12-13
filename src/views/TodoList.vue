@@ -17,7 +17,7 @@
       </v-toolbar>
 
       <v-list two-line>
-        <template v-for="(item, index) in items">
+        <template v-for="(item, index) in tasksFiltered">
           <v-list-item :key="item.titulo">
             <template>
               <v-list-item-action>
@@ -34,14 +34,14 @@
               </v-list-item-content>
 
               <v-list-item-action>
-                <v-btn class="mx-2" fab dark x-small color="primary" @click="deleteTodo(item.id)">
+                <v-btn class="mx-2" fab dark x-small color="primary" @click="deleteTask(item.id)">
                   <v-icon dark>mdi-close</v-icon>
                 </v-btn>
               </v-list-item-action>
             </template>
           </v-list-item>
 
-          <v-divider v-if="index < items.length - 1" :key="index"></v-divider>
+          <v-divider v-if="index < tasksFiltered.length - 1" :key="index"></v-divider>
         </template>
       </v-list>
     </v-card>
@@ -57,7 +57,8 @@ export default {
     ModalForm
   },
   created() {
-    this.items = this.$store.getters.all_todos;
+    //this.items = this.$store.getters.all_todos;
+    this.$store.dispatch('retrieveTasks')
   },
   computed: {
     modalstatus() {
@@ -65,6 +66,9 @@ export default {
     },
     editingstatus() {
       return this.$store.state.editing;
+    },
+    tasksFiltered() {
+      return this.$store.getters.tasksFiltered
     }
   },
   data() {
@@ -90,8 +94,8 @@ export default {
       this.$store.state.modal_active = true;
       this.$store.state.editing = true;
     },
-    deleteTodo(id){
-      this.$store.dispatch("deleteTodo", id);
+    deleteTask(id){
+      this.$store.dispatch("deleteTask", id);
     }
   }
 };

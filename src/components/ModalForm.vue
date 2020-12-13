@@ -74,11 +74,11 @@ export default {
       }
 
       if(this.$store.state.editing === true){
-        this.$store.dispatch("updateTodo", this.item);
+        this.$store.dispatch("updateTask", this.item);
       }
       
       if(this.$store.state.editing === false){
-        this.$store.dispatch("addTodo", this.item);
+        this.$store.dispatch("addTask", this.item);
       }
 
       this.closeModal();

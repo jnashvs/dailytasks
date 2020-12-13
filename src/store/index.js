@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
+import axios from 'axios'
+
+axios.defaults.baseURL = 'http://localhost:8000/api'
+
 Vue.use(Vuex)
 //antes d td tem d export constant store e la na main.js importal
 //const store -> pode ser acessado globalmente: this.$store
@@ -17,26 +21,11 @@ export const store = new Vuex.Store({
       'action': '',
       'completed': false,
     },
-    todos: [
-      {
-        'id': 1,
-        'title': 'titulo 1',
-        'subtitle': 'subtitulo 1',
-        'action': '12 dez 2020',
-        'completed': false,
-      },
-      {
-        'id': 2,
-        'title': 'titulo 2',
-        'subtitle': 'subtitulo 2',
-        'action': '17 dez 2020',
-        'completed': true,
-      }
-    ]
+    todos: []
   },
   getters: {
-    all_todos(state){
-        return state.todos
+    all_todos(state) {
+      return state.todos
     },
     remaining(state) {
       return state.todos.filter(todo => !todo.completed).length
@@ -44,14 +33,14 @@ export const store = new Vuex.Store({
     anyRemaining(state, getters) {
       return getters.remaining != 0
     },
-    todosFiltered(state) {
-      if (state.filter == 'all') {
-        return state.todos
-      } else if (state.filter == 'active') {
-        return state.todos.filter(todo => !todo.completed)
-      } else if (state.filter == 'completed') {
-        return state.todos.filter(todo => todo.completed)
-      }
+    tasksFiltered(state) {
+      // if (state.filter == 'all') {
+      //   return state.todos
+      // } else if (state.filter == 'active') {
+      //   return state.todos.filter(todo => !todo.completed)
+      // } else if (state.filter == 'completed') {
+      //   return state.todos.filter(todo => todo.completed)
+      // }
       return state.todos
     },
     showClearCompletedButton(state) {
@@ -59,8 +48,9 @@ export const store = new Vuex.Store({
     }
   },
   mutations: {
-    addTodo(state, todo) {
+    addTask(state, todo) {
       state.todos.push({
+        id: todo.id,
         action: todo.action,
         subtitle: todo.subtitle,
         title: todo.title,
@@ -69,7 +59,7 @@ export const store = new Vuex.Store({
 
       state.editing = false
     },
-    updateTodo(state, todo) {
+    updateTask(state, todo) {
       const index = state.todos.findIndex(item => item.id == todo.id)
       state.todos.splice(index, 1, {
         'id': todo.id,
@@ -81,7 +71,7 @@ export const store = new Vuex.Store({
 
       state.editing = false
     },
-    deleteTodo(state, id) {
+    deleteTask(state, id) {
       const index = state.todos.findIndex(item => item.id == id)
       state.todos.splice(index, 1)
     },
@@ -93,23 +83,50 @@ export const store = new Vuex.Store({
     },
     clearCompleted(state) {
       state.todos = state.todos.filter(todo => !todo.completed)
+    },
+    retrieveTasks(state, todos) {
+      state.todos = todos
     }
   },
   actions: {
-    addTodo(context, todo) {
-      setTimeout(() => {
-        context.commit('addTodo', todo)
-      }, 100)
+    retrieveTasks(context) {
+      axios.get('/tasks')
+        .then(response => {
+          context.commit('retrieveTasks', response.data)
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
-    updateTodo(context, todo) {
-      setTimeout(() => {
-        context.commit('updateTodo', todo)
-      }, 100)
+    addTask(context, todo) {
+      axios.post('/task', todo)
+        .then(response => {
+          context.commit('addTask', response.data)
+          console.log('add sucessfully')
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
-    deleteTodo(context, id) {
-      setTimeout(() => {
-        context.commit('deleteTodo', id)
-      }, 100)
+    updateTask(context, todo) {
+      axios.put('/task/'+todo.id, todo)
+        .then(response => {
+          context.commit('updateTask', todo)
+          console.log(response.status)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    deleteTask(context, id) {
+      axios.delete('/task/' + id)
+        .then(response => {
+          context.commit('deleteTask', id)
+          console.log(response.status)
+        })
+        .catch(error => {
+          console.log(error)
+        })
     },
     checkAll(context, checked) {
       setTimeout(() => {
