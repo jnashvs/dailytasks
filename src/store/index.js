@@ -4,12 +4,17 @@ import Vuex from 'vuex'
 import axios from 'axios'
 
 axios.defaults.baseURL = 'http://localhost:8000/api'
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+import { auth } from "./modules/auth.js";
 
 Vue.use(Vuex)
 //antes d td tem d export constant store e la na main.js importal
 //const store -> pode ser acessado globalmente: this.$store
 // ex: acessat state-> this.$store.state.todos
 export const store = new Vuex.Store({
+  modules: {
+    auth
+  },
   state: {
     modal_active: false,
     editing: false,
@@ -89,6 +94,22 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+    register(context, data) {
+      return new Promise((resolve, reject) => {
+        axios.post('/register', {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+        })
+          .then(response => {
+            context.commit('retrieveTasks', response.data)
+            resolve(response)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
     retrieveTasks(context) {
       axios.get('/tasks')
         .then(response => {

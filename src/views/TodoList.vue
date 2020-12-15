@@ -29,7 +29,7 @@
               </v-list-item-action>
 
               <v-list-item-content @dblclick="doubleClick(item)">
-                <v-list-item-title v-text="item.title"></v-list-item-title>
+                <v-list-item-title v-text="item.title" :class="item.completed ? 'finished-task': ''"></v-list-item-title>
                 <v-list-item-subtitle :id="index" v-text="item.subtitle"></v-list-item-subtitle>
               </v-list-item-content>
 
@@ -100,3 +100,10 @@ export default {
   }
 };
 </script>
+<style>
+
+.finished-task{
+    text-decoration: line-through;
+}
+
+</style>
