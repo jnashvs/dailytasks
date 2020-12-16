@@ -75,7 +75,7 @@ export default {
     return {
       items: [],
       item: {},
-      dialog: false
+      dialog: false,
     };
   },
   methods: {

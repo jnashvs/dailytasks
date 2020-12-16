@@ -16,6 +16,7 @@ export const store = new Vuex.Store({
     auth
   },
   state: {
+    token: localStorage.getItem('token') || '',
     modal_active: false,
     editing: false,
     filter: 'all',
@@ -111,6 +112,9 @@ export const store = new Vuex.Store({
       })
     },
     retrieveTasks(context) {
+
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' +context.state.token
+
       axios.get('/tasks')
         .then(response => {
           context.commit('retrieveTasks', response.data)

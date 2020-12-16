@@ -4,6 +4,7 @@ import TodoList from '../views/TodoList.vue'
 import Register from '../components/auth/Register.vue'
 import Login from '../components/auth/Login.vue'
 import Hello from '../components/HelloWorld.vue'
+import axios from 'axios'
 //import store from '../store/index.js'
 
 //console.log('dentro router')
@@ -17,6 +18,9 @@ const routes = [
     component: Hello,
     meta:{
       requiresAuth: true
+    },
+    beforeEnter: (to, from, next) => {
+      guard(to, from, next);
     }
   },
   {
@@ -25,6 +29,9 @@ const routes = [
     component: TodoList,
     meta:{
       requiresAuth: true
+    },
+    beforeEnter: (to, from, next) => {
+      guard(to, from, next);
     }
   },
   {
@@ -52,6 +59,26 @@ const router = new VueRouter({
 })
 
 //
+const guard = function(to, from, next) {
+  // check for valid auth token
+  axios.get('/isvalidtoken').then(response => {
+      // Token is valid, so continue
+      if(response.data.valid){
+        next();
+      }else{
+        localStorage.removeItem('token')
+        window.location.href = "/login";
+      }
+      
+  }).catch(error => {
+      // There was an error so redirect
+      console.log(error)
+      localStorage.removeItem('token')
+      window.location.href = "/login";
+  })
+};
+
+//
 router.beforeEach((to, from, next) => {
   let isAuthenticated = localStorage.getItem('token') || '';
 
@@ -77,7 +104,7 @@ router.beforeEach((to, from, next) => {
     next()
   }
   
-  
+
 })
 
 // router.beforeEach((to, from, next) => {
