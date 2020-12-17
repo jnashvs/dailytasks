@@ -92,7 +92,12 @@ export const store = new Vuex.Store({
     },
     retrieveTasks(state, todos) {
       state.todos = todos
-    }
+    },
+    logout(state) {
+      state.status = ''
+      state.token = ''
+      localStorage.removeItem('token')
+    },
   },
   actions: {
     register(context, data) {
@@ -120,7 +125,8 @@ export const store = new Vuex.Store({
           context.commit('retrieveTasks', response.data)
         })
         .catch(error => {
-          console.log(error)
+          console.log(error.name)
+          context.commit('logout')
         })
     },
     addTask(context, todo) {
@@ -130,7 +136,8 @@ export const store = new Vuex.Store({
           console.log('add sucessfully')
         })
         .catch(error => {
-          console.log(error)
+          console.log(error.name)
+          context.commit('logout')
         })
     },
     updateTask(context, todo) {
@@ -140,7 +147,8 @@ export const store = new Vuex.Store({
           console.log(response.status)
         })
         .catch(error => {
-          console.log(error)
+          console.log(error.name)
+          context.commit('logout')
         })
     },
     deleteTask(context, id) {
@@ -150,7 +158,8 @@ export const store = new Vuex.Store({
           console.log(response.status)
         })
         .catch(error => {
-          console.log(error)
+          console.log(error.name)
+          context.commit('logout')
         })
     },
     checkAll(context, checked) {

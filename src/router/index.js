@@ -4,7 +4,6 @@ import TodoList from '../views/TodoList.vue'
 import Register from '../components/auth/Register.vue'
 import Login from '../components/auth/Login.vue'
 import Hello from '../components/HelloWorld.vue'
-import axios from 'axios'
 //import store from '../store/index.js'
 
 //console.log('dentro router')
@@ -19,9 +18,6 @@ const routes = [
     meta:{
       requiresAuth: true
     },
-    beforeEnter: (to, from, next) => {
-      guard(to, from, next);
-    }
   },
   {
     path: '/',
@@ -30,9 +26,6 @@ const routes = [
     meta:{
       requiresAuth: true
     },
-    beforeEnter: (to, from, next) => {
-      guard(to, from, next);
-    }
   },
   {
     path: '/login',
@@ -59,24 +52,29 @@ const router = new VueRouter({
 })
 
 //
-const guard = function(to, from, next) {
-  // check for valid auth token
-  axios.get('/isvalidtoken').then(response => {
-      // Token is valid, so continue
-      if(response.data.valid){
-        next();
-      }else{
-        localStorage.removeItem('token')
-        window.location.href = "/login";
-      }
+// const guard = function(to, from, next) {
+//   // check for valid auth token
+//   if(localStorage.getItem('token')){
+//   axios.get('/isvalidtoken').then(response => {
+//       // Token is valid, so continue
+//       console.log('valid: '+response.data.valid)
+//       if(response.data.valid){
+//          next();
+//       }else{
+//         localStorage.removeItem('token')
+//         window.location.href = "/login";
+//       }
       
-  }).catch(error => {
-      // There was an error so redirect
-      console.log(error)
-      localStorage.removeItem('token')
-      window.location.href = "/login";
-  })
-};
+//   }).catch(error => {
+//       // There was an error so redirect
+//       console.log(error)
+//       localStorage.removeItem('token')
+//       window.location.href = "/login";
+//   })
+// }else{
+//   next();
+// }
+// };
 
 //
 router.beforeEach((to, from, next) => {

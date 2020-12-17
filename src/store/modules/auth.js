@@ -17,7 +17,7 @@ export const auth = {
         },
         auth_success(state, token, user) {
             state.status = 'success'
-            state.token = token
+            state.token = localStorage.getItem('token') || ''
             state.user = user
         },
         register_status(state, value) {
@@ -29,6 +29,7 @@ export const auth = {
         logout(state) {
             state.status = ''
             state.token = ''
+            localStorage.removeItem('token')
         },
     },
 
@@ -72,6 +73,7 @@ export const auth = {
                     })
             })
         },
+
 
     },
     getters: {
